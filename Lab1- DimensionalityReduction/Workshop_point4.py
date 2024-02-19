@@ -21,23 +21,24 @@ import sys
 # your photo and the approximation are?
 # ==============================================================================
 # Path of unsupervised algorithms from scratch
-package_path = r'LAB1\Unsupervised\dimensional_reduction'
+package_path = r'src'
 sys.path.append(package_path) #Add custom classes path to script
 
 # Read picture
-my_face = Image.open(r"LAB1\pictures\Natalia_Lopez.jpg").convert('L')
+my_face = Image.open(r"Lab1- DimensionalityReduction\pictures\Natalia_Lopez.jpg").convert('L')
 my_face_array = np.array(my_face,dtype= float)
 
 # Applying SVD on picture of my face
 # ==============================================================================
 # Import implemented packages 
-from svd import SVD
+from Unsupervised.dimensional_reduction.svd import SVD
 
 print("\nDimensionality Reduction with SVD\n")
 
+# Initializing values
 distance = 50000 # 16.476 using n = 1
 n = 0
-stop_distance = 1000
+stop_distance = 100
 
 while distance > stop_distance:
     # create a SVD object with n components
@@ -64,8 +65,8 @@ while distance > stop_distance:
     n= n + 1
 
 print(f"\nThe picture of my face is {distance:,.0f} pixels distant from picture \
-approximation using n_components = {n-1} and is appropriately reproduced.\n")
-print(f"\nQuantifying the difference between my photo and the approximation\
+approximation using n_components = {n-1} and it is appropriately reproduced.\n")
+print(f"Quantifying the difference between my photo and the approximation\
  is possible using Euclidean Distance mentioned in Point 2. ")
 
 # Plot approximation face

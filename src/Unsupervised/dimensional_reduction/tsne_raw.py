@@ -6,7 +6,7 @@
 import numpy as np
 
 # ==============================================================================
-#                           T-SNE FROM SCRATCH
+#                             T-SNE FROM SCRATCH
 # ==============================================================================
 def get_original_pairwise_affinities(X:np.array([]),perplexity=10):
 
@@ -165,7 +165,7 @@ class TSNE:
         self.p_ij_symmetric = get_symmetric_p_ij(p_ij)
 
     def transform(self, X,
-        iterations,
+        iterations = 1000,
         η = 200,
         early_exaggeration = 4,):
 
@@ -192,6 +192,8 @@ class TSNE:
                 α = 0.8
                 early_exaggeration = 1
 
+            print(type(Y[t]))
+            print(Y[t].shape)
             # Get Low Dimensional Affinities
             q_ij = get_low_dimensional_affinities(Y[t])
 

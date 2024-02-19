@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "lab1"
+name = "ml2"
 version = "0.1.0"
 description = ""
 authors = ["Natalia Lopez <natalia.lopezg@udea.edu.co>"]

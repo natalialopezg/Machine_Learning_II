@@ -20,7 +20,7 @@ from sklearn.preprocessing import StandardScaler
 # 3) Let’s create the unsupervised Python package
 # ==============================================================================
 # Path of unsupervised algorithms from scratch
-package_path = r'LAB1\Unsupervised\dimensional_reduction'
+package_path = r'src'
 sys.path.append(package_path) #Add custom classes path to script
 
 # Load DataSet for test of implemented packages
@@ -32,6 +32,7 @@ X, y = wine_data['data'], wine_data['target']
 print(f"Features of dataset: {wine_data['feature_names']}\n")
 print(f"Data matrix shape: {X.shape}")
 print(f"Target vector shape: {y.shape}")
+
 
 # Plotting two random features of raw data
 fig1 = plt.figure(1,figsize=(12,3)) 
@@ -45,7 +46,7 @@ plt.legend(handles=plot.legend_elements()[0],
 # Applying PCA on raw data
 # ==============================================================================
 # Import implemented packages 
-from pca import PCA
+from Unsupervised.dimensional_reduction.pca import PCA
 
 print("\nDimensionality Reduction with PCA")
 
@@ -104,7 +105,7 @@ plt.legend(handles=plot.legend_elements()[0],
            loc='lower left')
 
 # Import implemented packages 
-from svd import SVD
+from Unsupervised.dimensional_reduction.svd import SVD
 
 print("\nDimensionality Reduction with SVD")
 
@@ -164,19 +165,16 @@ plt.legend(handles=plot.legend_elements()[0],
            loc='lower left')
 
 # Import implemented packages 
-from tsne import TSNE
+from Unsupervised.dimensional_reduction.tsne import TSNE
 
 print("\nDimensionality Reduction with T-SNE")
 
 
 # create a T-SNE object with 2 components
-tsne = TSNE(n_dimensions=2)
+tsne = TSNE(n_dimensions=2,)
 
-# fit the data
-tsne.fit(X)
-
-# transform the data using the T-SNE object
-X_transformed_tsne = tsne.transform(X,1000)
+# fit and transform the data using the T-SNE object
+X_transformed_tsne = tsne.fit_transform(X)
 
 print(f"Transformed data matrix shape: {X_transformed_tsne.shape}")
 
@@ -196,11 +194,8 @@ scaler = StandardScaler()
 scaler.fit(X)
 X_normalized = scaler.transform(X)
 
-# Apply T-SNE now
-tsne.fit(X_normalized)
-
-# transform the data using the T-SNE object
-X_transformed_tsne = tsne.transform(X_normalized,1000)
+# fit and transform the data using the T-SNE object
+X_transformed_tsne = tsne.fit_transform(X_normalized)
 
 # Plotting T-SNE results
 fig3.add_subplot(1, 3, 3) 

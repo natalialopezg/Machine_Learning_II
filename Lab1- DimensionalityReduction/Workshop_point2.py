@@ -19,7 +19,7 @@ import os
 # alongside your classmates
 # ==============================================================================
 # Read original picture
-original_picture= Image.open(r'LAB1\Original_picture.jpg')
+original_picture= Image.open(r'Lab1- DimensionalityReduction\Original_picture.jpg')
 
 # Grayscale transformation
 gray_image = original_picture.convert('L')
@@ -29,7 +29,7 @@ w,h  = 256, 256
 modified_image = gray_image.resize((w,h))
 
 # Save modified picture
-modified_image.save('LAB1\Modified_picture.jpg')
+modified_image.save('Lab1- DimensionalityReduction\Modified_picture.jpg')
 
 # Plot edited face
 fig = plt.figure(1,figsize=(10, 5)) 
@@ -39,12 +39,11 @@ plt.title("Original picture")
 fig.add_subplot(1, 2, 2) 
 plt.imshow(modified_image, cmap='gray') 
 plt.title("Modified picture")
-# plt.show()
 
 # Calculate and plot the average face of the cohort
 # ==============================================================================
 # Read files in directory
-files = os.listdir('LAB1\pictures')
+files = os.listdir('Lab1- DimensionalityReduction\pictures')
 filenames = [filename for filename in files if filename[-4:].lower() in [".jpg",".png"]]
 
 # Create array for result
@@ -54,7 +53,7 @@ result = np.zeros((w,h, 1),float)
 pictures = []
 for i,picture_name in enumerate(filenames):
     # picture_name = "Natalia_Lopez.jpg" # Test distance when average face is just my face.
-    path = f"LAB1\pictures\{picture_name}"
+    path = f"Lab1- DimensionalityReduction\pictures\{picture_name}"
     picture = Image.open(path).convert('L')
     picture_array = np.array(picture,dtype= float)
     if (picture_array.shape[0] != w) | (picture_array.shape[1] != h):
@@ -79,16 +78,16 @@ plt.title('Average face')
 plt.axis('off')
 
 # Distance from average
-my_face = Image.open(r"LAB1\pictures\Natalia_Lopez.jpg").convert('L')
+my_face = Image.open(r"Lab1- DimensionalityReduction\pictures\Natalia_Lopez.jpg").convert('L')
 my_face_array = np.array(my_face,dtype= float)
 avg_array = np.array(average_array,dtype= float)
 
 diff =  avg_array - my_face_array
 
 distance = np.sqrt(np.sum(np.square(diff)))
-print(f"My face is {distance:,.0f} pixels distant from average face of the cohort\n")
-print(f"To measure de distance between my face and de average face of the cohort \
-I use the Euclidean Distance to measure the matrix distance. This distance corresponds to \
+print(f"My face is {distance:,.0f} pixels distant from average face of the cohort.\n")
+print(f"To measure de distance between my face and de average face of the cohort, \
+I used the Euclidean Distance to measure the matrix distance. This distance corresponds to \
 the square root of the squared differences between corresponding elements.\n")
 
 plt.show()

@@ -77,7 +77,6 @@ y_raw = pd.DataFrame(mnist.target)
 y = y_raw[y_raw[0].isin([0,8])]
 X = X_raw.iloc[y.index]
 
-print(f"Features of dataset: {mnist['feature_names']}\n")
 print(f"Data matrix shape: {X.shape}")
 print(f"Target vector shape: {y.shape}")
 

@@ -66,28 +66,33 @@ def training_model(X,y):
 # model with only 2 features per image
 # ==============================================================================
 # Path of unsupervised algorithms from scratch
-package_path = r'LAB1\Unsupervised\dimensional_reduction'
+package_path = r'src'
 sys.path.append(package_path) #Add custom classes path to script
 
 # Load dataset
 mnist = load_digits()
+
+# # Define arrays X: data matrix, y: classification target
+# X, y = wine_data['data'], wine_data['target']
 
 # Define arrays X: data matrix, y: classification target
 X_raw = pd.DataFrame(mnist.data)
 y_raw = pd.DataFrame(mnist.target)
 
 # Filter data by selecting classes 0s and 8s
-y = y_raw[y_raw[0].isin([0,8])]
-X = X_raw.iloc[y.index]
+y_filtered = y_raw[y_raw[0].isin([0,8])]
+X_filtered = X_raw.iloc[y_filtered.index]
 
-print(f"Features of dataset: {mnist['feature_names']}\n")
+y = y_filtered.to_numpy()
+X = X_filtered.to_numpy()
+
 print(f"Data matrix shape: {X.shape}")
 print(f"Target vector shape: {y.shape}")
 
 # Applying PCA on data
 # ==============================================================================
 # Import implemented packages 
-from pca import PCA
+from Unsupervised.dimensional_reduction.pca import PCA
 
 print("\nDimensionality Reduction with PCA")
 
@@ -114,7 +119,7 @@ plt.legend(handles=plot.legend_elements()[0],
 # Applying SVD on raw data
 # ==============================================================================
 # Import implemented packages 
-from svd import SVD
+from Unsupervised.dimensional_reduction.svd import SVD
 
 print("\nDimensionality Reduction with SVD")
 
@@ -141,18 +146,15 @@ plt.legend(handles=plot.legend_elements()[0],
 # Applying T-SNE on raw data
 # ==============================================================================
 # Import implemented packages 
-from tsne import TSNE
+from Unsupervised.dimensional_reduction.tsne import TSNE
 
 print("\nDimensionality Reduction with T-SNE")
 
 # create a T-SNE object with 2 components
 tsne = TSNE(n_dimensions=2)
 
-# fit the data
-tsne.fit(X.to_numpy())
-
-# transform the data using the T-SNE object
-X_transformed_tsne = tsne.transform(X,1000)
+# fit and transform the data using the T-SNE object
+X_transformed_tsne = tsne.fit_transform(X)
 
 print(f"Transformed data matrix shape: {X_transformed_tsne.shape}")
 
@@ -193,6 +195,7 @@ fig2.canvas.manager.set_window_title('Confusion matrices for each implemented al
 
 plt.show()
 
-print("Dimensionality reduction influences the performance of models by \
-increasing the values of their metrics to 98% or above.")
+print("Dimensionality reduction influences the performance of the models by increasing \
+the values of their metrics to 98% or more. It also reduces computational consumption \
+when training the models.")
 
