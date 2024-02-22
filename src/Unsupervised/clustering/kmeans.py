@@ -5,89 +5,74 @@
 import numpy as np
 
 # ==============================================================================
-#                                 FUNCTIONS
+#                             K-MEANS FROM SCRATCH
 # ==============================================================================
 # Create class
-class PCA:
-
-    def __init__(self, n_clusters):
+class KMeans:
+    def __init__(self, n_clusters=8, max_iter=300, tol=1e-4, random_state=None):
         self.n_clusters = n_clusters
-        # self.components = None
-        # self.mean = None
+        self.max_iter = max_iter
+        self.tol = tol
+        self.cluster_centers_ = None
+        self.labels = None
+        self.random_state = random_state
 
-    # randomly initializing K centroid by picking K samples from X
-    def initialize_random_centroids(self, X=None):
-        """Initializes and returns k random centroids"""
-        m, n = np.shape(X)
-        # a centroid should be of shape (1, n), so the centroids array will be of shape (K, n)
-        centroids = np.empty((self.K, n))
-        for i in range(self.K):
-            # pick a random data point from X as the centroid
-            centroids[i] =  X[np.random.choice(range(m))] 
-        return centroids
+    def _calc_distances(self, X):
+        # Calculates and returns the distances by taking the L2 norm 
+        # of the difference between the two vectors
+        distances = np.zeros((X.shape[0], self.n_clusters))
+        for i, centroid in enumerate(self.cluster_centers_):
+            distances[:, i] = np.linalg.norm(X - centroid, axis=1)
+        return distances    
 
-    # Calculate euclidean distance between two vectors
-    def _euclidean_distance(self,x1, x2):
-        """Calculates and returns the euclidean distance between two vectors x1 and x2"""
-        return np.sqrt(np.sum(np.power(x1 - x2, 2))) # np.linalg.norm(x1 - x2)
+    def fit(self, X):
+        n_samples, n_features = X.shape
+        
+        # Reseed the singleton RandomState instance
+        np.random.seed(self.random_state)
+        
+        # Initialize centroids randomly
+        idx = np.random.choice(n_samples, self.n_clusters, replace=False)
+        self.cluster_centers_ = X[idx]
+        
+        for i in range(self.max_iter):
+            # Assign each data point to the nearest centroid
+            distances = self._calc_distances(X)
+            self.labels = np.argmin(distances, axis=1)
+            
+            # Update centroids
+            new_centroids = np.zeros((self.n_clusters, n_features))
+            for j in range(self.n_clusters):
+                new_centroids[j] = np.mean(X[self.labels == j], axis=0)
+                
+            # Check for convergence
+            if np.sum(np.abs(new_centroids - self.cluster_centers_)) < self.tol:
+                break
+                
+            self.cluster_centers_ = new_centroids
+            
+    def fit_predict(self, X):
+        self.fit(X)
+        distances = self._calc_distances(X)
+        return np.argmin(distances, axis=1)
 
-    # Finding the closest centroid to a given data point
-    def _closest_centroid(self,x, centroids):
-        """Finds and returns the index of the closest centroid for a given vector x"""
-        distances = np.empty(self.K)
-        for i in range(self.K):
-            distances[i] = self._euclidean_distance(centroids[i], x)
-        return np.argmin(distances) # return the index of the lowest distance
+# Datasets
+from sklearn.datasets import make_blobs 
 
-    # Assign the samples to closest centroids to create the clusters
-    def _create_clusters(self, centroids, X):
-        """Returns an array of cluster indices for all the data samples"""
-        m, _ = np.shape(X)
-        cluster_idx = np.empty(m)
-        for i in range(m):
-            cluster_idx[i] = self._closest_centroid(X[i], centroids, self.K)
-        return cluster_idx
+# blobs dataset
+# ============================================
+blobs  = make_blobs(n_samples=500, centers=4, cluster_std=0.8, random_state=0)
 
-    # Compute the means of cluster to find new centroids.
-    def _compute_means(cluster_idx, X):
-        """Computes and returns the new centroids of the clusters"""
-        _, n = np.shape(X)
-        centroids = np.empty((K, n))
-        for i in range(K):
-            points = X[cluster_idx == i] # gather points for the cluster i
-            centroids[i] = np.mean(points, axis=0) # use axis=0 to compute means across points
-        return centroids
+# data
+X = blobs[0]
+y = blobs[1]
 
-#the K-means algorithm for the required number of iterations
-def _run_Kmeans(K, X, max_iterations=500):
-    """Runs the K-means algorithm and computes the final clusters"""
-    # initialize random centroids
-    centroids = initialize_random_centroids(K, X)
-    # loop till max_iterations or convergance
-    print(f"initial centroids: {centroids}")
-    for _ in range(max_iterations):
-        # create clusters by assigning the samples to the closet centroids
-        clusters = create_clusters(centroids, K, X)
-        previous_centroids = centroids                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-        # compute means of the clusters and assign to centroids
-        centroids = compute_means(clusters, K, X)
-        # if the new_centroids are the same as the old centroids, return clusters
-        diff = previous_centroids - centroids
-        if not diff.any():
-            return clusters
-    return clusters
+# KMedoids
+# ============================================
+kmeans = KMeans(n_clusters=4, max_iter=1000, random_state=123)
 
+# fit the data
+# kmedoids.fit(X)
 
-# ==============================================================================
-#                              K-MEANS FROM SCRATCH
-# ==============================================================================
-# Create class
-from sklearn import datasets
-# creating a dataset for clustering
-X, y = datasets.make_blobs()
-y_preds = run_Kmeans(3, X)
-
-from mlfromscratch.utils import Plot
-p = Plot()
-p.plot_in_2d(X, y_preds, title="K-Means Clustering")
-p.plot_in_2d(X, y, title="Actual Clustering")
+# predict
+y_kmeans= kmeans.fit_predict(X)
